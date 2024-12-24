@@ -1,0 +1,99 @@
+let player;
+let bullets = [];
+let bulletSpeed = 5;
+
+// 玩家类
+class Player {
+    constructor() {
+        this.x = width / 2;
+        this.y = height - 100;  // 调整玩家的垂直位置，使其更居中
+        this.width = 200;  // 放大玩家方块的宽度
+        this.height = 200;  // 放大玩家方块的高度
+    }
+
+    move() {
+        if (keyIsDown(LEFT_ARROW) && this.x > 0) {
+            this.x -= 10;  // 增加移动速度
+        }
+        if (keyIsDown(RIGHT_ARROW) && this.x < width - this.width) {
+            this.x += 10;  // 增加移动速度
+        }
+    }
+    show() {
+      fill("#a2d2ff");
+      rect(this.x, this.y, this.width, this.height);  // 绘制放大的玩家方块
+  }
+
+}
+
+// 子弹类
+class Bullet {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.width = 10;  // 放大子弹的宽度
+        this.height = 20;  // 放大子弹的高度
+    }
+
+    move() {
+        this.y -= bulletSpeed;  // 子弹向上移动
+    }
+
+    show() {
+        fill("#ffc8dd");
+        rect(this.x, this.y, this.width, this.height);  // 绘制放大的子弹
+    }
+}
+
+// setup() 负责初始化设置
+function setup() {
+    createCanvas(windowWidth, windowHeight);  // 设置画布填充整个屏幕
+    player = new Player();  // 创建玩家对象
+}
+
+// draw() 负责每一帧的更新
+function draw() {
+    background("#cdb4db");
+
+    // 玩家移动和显示
+    player.move();
+    player.show();
+
+    // 绘制子弹
+    for (let i = bullets.length - 1; i >= 0; i--) {
+        let bullet = bullets[i];
+        bullet.move();
+        bullet.show();
+
+        // 移除超出屏幕的子弹
+        if (bullet.y < 0) {
+            bullets.splice(i, 1);
+        }
+    }
+
+    // 绘制 "tkuet" 字样
+    fill(255);
+    textSize(80);
+    textAlign(LEFT, TOP);
+    text("tkuet", 50, 20);  // 在画布上显示 "tkuet"
+     strokeWeight(4) //框線粗度
+     stroke("#c77dff") //框線顏色
+
+    textSize(30);
+    text("上下左右鍵控制左右邊方向", 50, 130)
+    text("空白鍵發射子彈", 50, 180)
+
+}
+
+// 按下空格键发射子弹
+function keyPressed() {
+    if (key === ' ') {
+        let bullet = new Bullet(player.x + player.width / 2 - 5, player.y);  // 创建新子弹，调整位置以适应新的尺寸
+        bullets.push(bullet);  // 将子弹添加到子弹数组中
+    }
+}
+
+// 处理窗口调整大小时重新调整画布大小
+function windowResized() {
+    resizeCanvas(windowWidth, windowHeight);  // 重新调整画布的大小
+}
